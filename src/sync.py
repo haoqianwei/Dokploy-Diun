@@ -52,7 +52,7 @@ def generate_diun_config(apps):
             "schedule": "0 */6 * * *",
             "firstCheckNotif": False
         },
-        "notifiers": {
+        "notif": {
             "script": {
                 "cmd": "/app/scripts/notifier.sh"
             }
@@ -64,9 +64,7 @@ def generate_diun_config(apps):
         }
     }
     
-    images_config = {
-        "images": []
-    }
+    images_config = []
     
     webhook_map = {} # image -> list of webhooks
     
@@ -77,7 +75,7 @@ def generate_diun_config(apps):
             
         if img not in webhook_map:
             webhook_map[img] = []
-            images_config["images"].append({
+            images_config.append({
                 "name": img
             })
         

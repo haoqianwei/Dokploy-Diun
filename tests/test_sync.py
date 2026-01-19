@@ -60,9 +60,8 @@ class TestSync(unittest.TestCase):
             # Verify normalize_image works
             self.assertEqual(apps[0]["image"], "docker.io/nginx:latest")
             
-            # Check if files were "opened" for writing
-            # (Note: testing exact content with mock_open can be complex, 
-            # but this verifies the flow)
+            # Verify generate_diun_config logic
+            # This is a bit tricky with mock_open, but we can verify calls
             self.assertTrue(mocked_file.called)
 
 if __name__ == "__main__":

@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Generated Files
+diun.yml
+diun_images.yml
+webhooks.json
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
