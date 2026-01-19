@@ -14,17 +14,24 @@ if [ "$DIUN_ENTRY_STATUS" != "update" ] && [ "$DIUN_ENTRY_STATUS" != "new" ]; th
   exit 0
 fi
 
-WEBHOOKS=$(jq -r --arg img "$DIUN_ENTRY_IMAGE" '.[$img] | .[]' "$WEBHOOKS_FILE")
+WEBHOOKS_DATA=$(jq -c --arg img "$DIUN_ENTRY_IMAGE" '.[$img] | .[]' "$WEBHOOKS_FILE")
 
-if [ -z "$WEBHOOKS" ]; then
+if [ -z "$WEBHOOKS_DATA" ]; then
   echo "No webhooks found for image: $DIUN_ENTRY_IMAGE"
   exit 1
 fi
 
-for WEBHOOK in $WEBHOOKS; do
-  echo "Triggering Dokploy webhook: $WEBHOOK"
-  curl -X POST "$WEBHOOK" \
+echo "$WEBHOOKS_DATA" | while read -r DATA; do
+  APP_ID=$(echo "$DATA" | jq -r '.id')
+  APP_NAME=$(echo "$DATA" | jq -r '.name')
+  
+  TITLE="Diun Update: $DIUN_ENTRY_IMAGE"
+  DESC="Automatically triggered by Diun for application '$APP_NAME'. Status: $DIUN_ENTRY_STATUS"
+  
+  echo "Triggering Dokploy deployment for: $APP_NAME (ID: $APP_ID)"
+  curl -s -X POST "$DOKPLOY_URL/api/application.deploy" \
        -H "x-api-key: $DOKPLOY_TOKEN" \
        -H "accept: application/json" \
-       -H "Content-Type: application/json"
+       -H "Content-Type: application/json" \
+       -d "{\"applicationId\": \"$APP_ID\", \"title\": \"$TITLE\", \"description\": \"$DESC\"}"
 done

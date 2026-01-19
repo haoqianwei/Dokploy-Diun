@@ -42,7 +42,7 @@ def fetch_dokploy_apps():
                     apps.append({
                         "name": app.get("name"),
                         "image": normalize_image(app.get("dockerImage")),
-                        "webhook": f"{DOKPLOY_URL}/api/application.deploy?applicationId={app.get('applicationId')}"
+                        "id": app.get("applicationId")
                     })
     return apps
 
@@ -80,9 +80,10 @@ def generate_diun_config(apps):
                 "name": img
             })
         
-        # Add webhook if not already in the list for this image
-        if app["webhook"] not in webhook_map[img]:
-            webhook_map[img].append(app["webhook"])
+        # Add metadata if not already in the list for this image
+        meta = {"id": app["id"], "name": app["name"]}
+        if meta not in webhook_map[img]:
+            webhook_map[img].append(meta)
         
     with open(f"{CONFIG_DIR}/diun.yml", "w") as f:
         yaml.dump(config, f)

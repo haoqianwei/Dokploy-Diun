@@ -55,6 +55,9 @@ class TestSync(unittest.TestCase):
         # Use local paths for testing
         with patch('builtins.open', unittest.mock.mock_open()) as mocked_file:
             apps = sync.fetch_dokploy_apps()
+            self.assertEqual(apps[0]["id"], "app-id-1")
+            self.assertEqual(apps[0]["name"], "App 1")
+            
             sync.generate_diun_config(apps)
             
             # Verify normalize_image works
