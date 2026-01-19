@@ -37,7 +37,8 @@ Create a new Application in Dokploy from your repository. Set the following envi
 |----------|-------------|
 | `DOKPLOY_URL` | Your Dokploy URL (e.g., `https://dokploy.example.com`) |
 | `DOKPLOY_TOKEN` | The API token generated in Step 1. |
-| `SYNC_INTERVAL` | (Optional) Seconds between syncs. Default: `300`. |
+| `SYNC_INTERVAL` | (Optional) Seconds between syncs with Dokploy. Default: `300`. |
+| `DIUN_SCHEDULE` | (Optional) Cron schedule for Diun image checks. Default: `0 */6 * * *`. |
 
 ## Development & Testing
 

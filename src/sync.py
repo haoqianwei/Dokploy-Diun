@@ -7,6 +7,7 @@ import time
 DOKPLOY_URL = os.getenv("DOKPLOY_URL", "http://localhost:3000")
 DOKPLOY_TOKEN = os.getenv("DOKPLOY_TOKEN")
 SYNC_INTERVAL = int(os.getenv("SYNC_INTERVAL", "300"))
+DIUN_SCHEDULE = os.getenv("DIUN_SCHEDULE", "0 */6 * * *")
 CONFIG_DIR = os.getenv("CONFIG_DIR", "/app")
 
 def normalize_image(image):
@@ -49,7 +50,7 @@ def generate_diun_config(apps):
     config = {
         "watch": {
             "workers": 10,
-            "schedule": "0 */6 * * *",
+            "schedule": DIUN_SCHEDULE,
             "firstCheckNotif": False
         },
         "notif": {
