@@ -9,20 +9,24 @@ Automate Docker image updates on Dokploy using [Diun](https://github.com/crazy-m
 - **Bulk Updates**: Triggers all relevant Dokploy applications when a shared image is updated.
 - **Secure**: Uses `x-api-key` authentication for both API access and webhook triggers.
 
+## How It Works
+
+1. **Sync Loop**: Periodically fetches Docker-based applications from Dokploy API
+2. **Config Generation**: Creates Diun configuration with unique images and webhook mappings
+3. **Image Monitoring**: Diun watches for updates based on the configured schedule
+4. **Auto-Deploy**: When an update is detected, triggers deployment for all affected applications
+
 ## Project Structure
 
 ```text
 .
 ├── Dockerfile           # Builds the all-in-one image
-├── requirements.txt     # Python dependencies
 ├── scripts/
 │   ├── entrypoint.sh    # Container entrypoint
-│   └── notifier.sh      # Webhook trigger script
-├── src/
-│   └── sync.py          # Core sync logic
+│   ├── sync.sh          # Core sync logic (fetches apps from Dokploy)
+│   └── notifier.sh      # Webhook trigger script (called by Diun)
 └── tests/
-    ├── test_sync.py     # Unit tests
-    └── verify.sh        # Integration simulation
+    └── verify.sh        # Integration test
 ```
 
 ## Setup
@@ -42,16 +46,21 @@ Create a new Application in Dokploy from your repository. Set the following envi
 
 ## Development & Testing
 
-### Local Setup
+### Prerequisites
+- Docker
+- `jq`, `curl`, and `bash` (included in the Docker image)
+
+### Building the Image
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+docker build -t dokploy-diun .
 ```
 
 ### Running Tests
-- **Unit Tests**: `python3 tests/test_sync.py`
-- **Manual Verification**: `cd tests && ./verify.sh`
+```bash
+cd tests && ./verify.sh
+```
+
+This integration test simulates Diun notifications and verifies that the notifier script correctly triggers Dokploy deployments.
 
 ## License
 MIT
