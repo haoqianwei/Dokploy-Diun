@@ -44,6 +44,48 @@ Create a new Application in Dokploy from your repository. Set the following envi
 | `SYNC_INTERVAL` | (Optional) Seconds between syncs with Dokploy. Default: `300`. |
 | `DIUN_SCHEDULE` | (Optional) Cron schedule for Diun image checks. Default: `0 */6 * * *`. |
 
+### 3. Advanced: Custom Diun Configuration (Optional)
+
+If you need advanced features like **Telegram notifications**, Discord, Slack, or custom watch settings, you can mount a custom `diun.yml` configuration file.
+
+#### Steps:
+
+1. **Copy the example configuration:**
+   ```bash
+   cp diun.yml.example diun.yml
+   ```
+
+2. **Edit `diun.yml`** and configure your desired notifiers:
+   ```yaml
+   notif:
+     telegram:
+       token: "YOUR_BOT_TOKEN"
+       chatIDs:
+         - "YOUR_CHAT_ID"
+     script:
+       cmd: /app/scripts/notifier.sh  # Keep this for Dokploy deployment triggers
+   ```
+
+3. **Mount the file** in your Dokploy application:
+   - In Dokploy Dashboard, go to your application's **Mounts** settings
+   - Add a volume mount: `/path/to/your/diun.yml:/app/diun.yml`
+   - Or in `docker-compose.yml`:
+     ```yaml
+     volumes:
+       - ./diun.yml:/app/diun.yml:ro
+     ```
+
+**Note:** When a custom `diun.yml` is mounted, the `DIUN_SCHEDULE` environment variable is ignored. Set the schedule in your config file instead.
+
+**Important:** Always keep the `script` notifier in your custom config to ensure Dokploy deployments are triggered:
+```yaml
+notif:
+  script:
+    cmd: /app/scripts/notifier.sh
+```
+
+See `diun.yml.example` for more notification options (Discord, Slack, Email, etc.).
+
 ## Development & Testing
 
 ### Prerequisites

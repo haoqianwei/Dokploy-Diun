@@ -66,8 +66,10 @@ sync_apps() {
     # Generate webhooks.json (image -> [{id, name}])
     echo "$NORMALIZED_APPS" | jq 'reduce .[] as $item ({}; .[$item.image] += [{id: $item.id, name: $item.name}])' > "$CONFIG_DIR/webhooks.json"
 
-    # Generate diun.yml
-    cat <<EOF > "$CONFIG_DIR/diun.yml"
+    # Generate diun.yml only if it doesn't exist (allow users to mount custom config)
+    if [ ! -f "$CONFIG_DIR/diun.yml" ]; then
+        echo "Generating default diun.yml..."
+        cat <<EOF > "$CONFIG_DIR/diun.yml"
 watch:
   workers: 10
   schedule: "$DIUN_SCHEDULE"
@@ -79,6 +81,9 @@ providers:
   file:
     filename: /app/diun_images.yml
 EOF
+    else
+        echo "Using existing diun.yml (custom config detected)"
+    fi
 
     NUM_APPS=$(echo "$NORMALIZED_APPS" | jq 'length')
     echo "Synced $NUM_APPS apps."
